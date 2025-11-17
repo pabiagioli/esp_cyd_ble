@@ -148,6 +148,7 @@ void LVGLOscUI::s_waveChanged(lv_event_t *e) {
     if (self) self->onWaveChanged(e);
 }
 void LVGLOscUI::s_btnClicked(lv_event_t *e) {
+    Serial.printf("--- UIButton clicked — e=%p ---\n", (void*)e);
     LVGLOscUI *self = static_cast<LVGLOscUI*>(lv_event_get_user_data(e));
     if (self) self->onBtnClicked(e);
 }

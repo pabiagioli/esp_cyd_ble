@@ -45,11 +45,11 @@ void Oscillator::setAmplitude(float amp) {
 void Oscillator::setWaveform(Waveform wf) {
     m_waveform.store(static_cast<uint8_t>(wf), std::memory_order_release);
 }
-
+/*
 void Oscillator::setEnabled(bool en) {
     m_enabled.store(en, std::memory_order_release);
 }
-
+*/
 float Oscillator::tableLookup(uint32_t phase) const {
     // map top bits of 32-bit phase to table index
     // index = phase >> (32 - log2(table_len))

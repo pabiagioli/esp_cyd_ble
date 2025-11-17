@@ -27,6 +27,7 @@ void setup() {
   uiTask->start();
   delay(500);
   bleTask->start();
+  delay(500);
 }
 
 void loop() {

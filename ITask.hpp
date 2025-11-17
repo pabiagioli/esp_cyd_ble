@@ -9,7 +9,7 @@ class ITask {
 public:
   explicit ITask(const char* task_name,
                  const BaseType_t pinned_core,
-                 const uint32_t task_stack_size = 1024 * 32,
+                 const uint32_t task_stack_size = 1024 * 48,
                  UBaseType_t task_priority = 1)
     : m_task_name(task_name), m_pinned_core(pinned_core), m_task_stack_size(task_stack_size), m_task_priority(task_priority) {}
 
