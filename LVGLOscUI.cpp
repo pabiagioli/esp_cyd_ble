@@ -1,3 +1,4 @@
+#include "Oscillator.hpp"
 #pragma once
 #include <Arduino.h>
 #include "LVGLOscUI.hpp"
@@ -39,6 +40,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
     m_freqSlider = lv_slider_create(cont);
     lv_slider_set_range(m_freqSlider, 20, 20000);
     lv_slider_set_value(m_freqSlider, 440, LV_ANIM_OFF);
+    m_osc->setFrequency(440);
     lv_obj_add_event_cb(m_freqSlider, LVGLOscUI::s_freqChanged, LV_EVENT_VALUE_CHANGED, this);
     lv_obj_set_grid_cell(m_freqSlider,
         LV_GRID_ALIGN_STRETCH, 0, 2,   // full width
@@ -57,6 +59,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
     m_ampSlider = lv_slider_create(cont);
     lv_slider_set_range(m_ampSlider, 0, 100);
     lv_slider_set_value(m_ampSlider, 50, LV_ANIM_OFF);
+    m_osc->setAmplitude(0.5);
     lv_obj_add_event_cb(m_ampSlider, LVGLOscUI::s_ampChanged, LV_EVENT_VALUE_CHANGED, this);
     lv_obj_set_grid_cell(m_ampSlider,
         LV_GRID_ALIGN_STRETCH, 0, 2,
@@ -76,6 +79,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
         LV_GRID_ALIGN_START, 0, 2,
         LV_GRID_ALIGN_CENTER, 4, 1
     );
+    m_osc->setWaveform(Waveform::Sine);
 
     // ========== Start Button ==========
     m_startBtn = lv_btn_create(cont);
@@ -103,7 +107,11 @@ void LVGLOscUI::onFreqChanged(lv_event_t *e) {
 
 void LVGLOscUI::onAmpChanged(lv_event_t *e) {
     int v = lv_slider_get_value(m_ampSlider);
-    m_osc->setAmplitude(static_cast<float>(v) / 100.0f);
+    float result = static_cast<float>(v) / 100.0f;
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "Amplitude: %.1f", result);
+    lv_label_set_text(m_ampLabel, buf);
+    m_osc->setAmplitude(result);
 }
 
 void LVGLOscUI::onWaveChanged(lv_event_t *e) {

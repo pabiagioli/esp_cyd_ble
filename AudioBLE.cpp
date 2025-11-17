@@ -93,7 +93,7 @@ void AudioBLE::update() {
 
   // Send BLE notification (safe)
   m_char->setValue(out, N / 2);
-  if (m_char->getSubscribedCount() > 0) {
+  if (clientSubscribed(m_char) > 0) {
     m_char->notify();
   }
 }

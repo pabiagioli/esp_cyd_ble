@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ITask.hpp"
+#include "LVGLOscilloscope.hpp"
 #include <memory>
 #include <SPI.h>
 
@@ -43,6 +44,7 @@ class UITask : public ITask {
 private:
   lv_obj_t* main_gui = nullptr;
   std::shared_ptr<LVGLOscUI> oscUI;
+  std::shared_ptr<LVGLOscilloscope> chartUI;
   std::shared_ptr<Oscillator> m_osc;
 
   void startUIFramework();
@@ -69,10 +71,19 @@ public:
   void setup() override {
     startUIFramework();
     setUITheme();
+
+    main_gui = lv_tabview_create(NULL);
+    lv_obj_t *setupTab = lv_tabview_add_tab(main_gui, "Setup");
+    lv_obj_t *viewerTab = lv_tabview_add_tab(main_gui, "Viewer");
+
     //m_osc = std::make_shared<Oscillator>(44100, 1024);
     oscUI = std::make_shared<LVGLOscUI>(m_osc);
-    oscUI->create(lv_scr_act());
-    //lv_screen_load(main_gui);
+    oscUI->create(setupTab);
+    
+    chartUI = std::make_shared<LVGLOscilloscope>(m_osc);
+    chartUI->begin(viewerTab);
+
+    lv_screen_load(main_gui);
   }
 
   void loop() override {
