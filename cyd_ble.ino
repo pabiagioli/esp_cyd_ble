@@ -5,11 +5,13 @@
 #include <lvgl.h>
 #include "Oscillator.hpp"
 #include "UITask.hpp"
+#include "BLETask.hpp"
 
 static std::shared_ptr<Oscillator> globalOsc = std::make_shared<Oscillator>(44100, 1024);
 
 // allocate the UI task once and keep it alive
 static std::shared_ptr<UITask> uiTask = nullptr;
+static std::shared_ptr<BLETask> bleTask = nullptr;
 
 void setup() {
   // put your setup code here, to run once:
@@ -20,6 +22,8 @@ void setup() {
   // create persistent task object (pin to core 1 for LVGL if you want)
   uiTask = std::make_shared<UITask>("LVGL Task", 1, globalOsc);
   uiTask->start();
+  bleTask = std::make_shared<BLETask>(globalOsc);
+  bleTask->start();
 }
 
 void loop() {

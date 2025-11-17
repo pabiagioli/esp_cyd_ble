@@ -48,7 +48,7 @@ private:
       return;
     }
     instance->setup();
-    for (;;) {
+    while(true) {
       instance->loop();
       // if loop() is expected to be non-blocking, add a tiny delay to yield CPU:
       //vTaskDelay(pdMS_TO_TICKS(1));
