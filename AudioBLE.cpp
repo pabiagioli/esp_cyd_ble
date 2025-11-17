@@ -2,11 +2,6 @@
 #include "AudioBLE.hpp"
 #include <Arduino.h>
 
-AudioBLE::AudioBLE(std::shared_ptr<Oscillator> osc)
-: m_osc(osc)
-{
-}
-
 void AudioBLE::begin()
 {
     const char* SERVICE_UUID        = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
@@ -14,7 +9,7 @@ void AudioBLE::begin()
 
     BLEDevice::init("ESP32-ADPCM");
 
-    BLEServer *server = BLEDevice::createServer();
+    server = BLEDevice::createServer();
 
     // Prevent hidden watchdog disconnects
     class ServerCallbacks : public BLEServerCallbacks {
@@ -104,8 +99,9 @@ void AudioBLE::update()
         // pack two nibbles into one byte
         *p++ = (hi << 4) | lo;
     }
-
+    portENTER_CRITICAL(&bleMux);
     m_char->setValue(out, PACKED_BYTES);
     m_char->notify();
+    portEXIT_CRITICAL(&bleMux);
     //Serial.println("--- BLEServer notified correctly ---");
 }

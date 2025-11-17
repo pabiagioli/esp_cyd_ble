@@ -6,7 +6,10 @@
 
 class AudioBLE {
 public:
-    AudioBLE(std::shared_ptr<Oscillator> osc);
+    
+    portMUX_TYPE bleMux = portMUX_INITIALIZER_UNLOCKED;
+    
+    explicit AudioBLE(std::shared_ptr<Oscillator> osc): m_osc(osc){}
 
     void begin();
     void start();
@@ -15,7 +18,7 @@ public:
 
 private:
     std::shared_ptr<Oscillator> m_osc;
-
+    BLEServer *server;
     BLECharacteristic *m_char = nullptr;
     bool m_running = false;
 

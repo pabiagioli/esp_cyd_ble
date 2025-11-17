@@ -1,4 +1,5 @@
 #pragma once
+#include <Arduino.h>
 #include "LVGLOscUI.hpp"
 #include <cstdio>
 #include <memory>
@@ -112,22 +113,24 @@ void LVGLOscUI::onWaveChanged(lv_event_t *e) {
 }
 
 void LVGLOscUI::onBtnClicked(lv_event_t *e) {
-    bool newState = !m_osc->nextSample(); // placeholder - we need to read enabled; but nextSample can't be used this way
-    // Instead, toggle using an atomic store/read pattern: read current via setEnabled/read? There is no getter, so use naive toggle:
-    // We'll toggle by setting enabled to !current by reading into a temp variable via a trick: setEnabled(read then invert) - but no getter was exposed.
-    // Simpler: use a static label to switch. We'll store enabled via an atomic in oscillator; read it by setting a temporary call
-    // To keep API simple, let's add a small read via casting: (unsafe read) - but acceptable on ESP32 (atomic bool).
-    // Workaround: reinterpret the atomic<bool> via lambda capturing pointer - but not visible. Instead, add an overload? To avoid changing header, we'll toggle by keeping a small visual button state:
-    // We'll use lv_obj_has_state to determine label and call setEnabled accordingly.
-    bool isChecked = lv_obj_has_state(m_startBtn, LV_STATE_CHECKED);
-    if (!isChecked) {
-        lv_obj_add_state(m_startBtn, LV_STATE_CHECKED);
-        lv_label_set_text(lv_obj_get_child(m_startBtn, 0), "Stop");
-        m_osc->setEnabled(true);
+    Serial.printf("UIButton clicked — m_osc=%p, m_btnToggle=%p\n", (void*)m_osc.get(), (void*)m_startBtn);
+    
+    auto self = this; // instance method
+    auto osc = m_osc; // shared_ptr copy
+    if (!osc) {
+        Serial.println("UI: no oscillator");
+        return;
+    }
+    
+
+    bool newState = osc->toggleEnabled();
+    lv_obj_t *label = lv_obj_get_child(self->m_startBtn, 0);
+    if (newState) {
+        lv_obj_add_state(self->m_startBtn, LV_STATE_CHECKED);
+        if(label) lv_label_set_text(label, "Stop");
     } else {
-        lv_obj_clear_state(m_startBtn, LV_STATE_CHECKED);
-        lv_label_set_text(lv_obj_get_child(m_startBtn, 0), "Start");
-        m_osc->setEnabled(false);
+        lv_obj_clear_state(self->m_startBtn, LV_STATE_CHECKED);
+        if(label) lv_label_set_text(label, "Start");
     }
 }
 

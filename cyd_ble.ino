@@ -7,7 +7,7 @@
 #include "UITask.hpp"
 #include "BLETask.hpp"
 
-static std::shared_ptr<Oscillator> globalOsc = std::make_shared<Oscillator>(44100, 1024);
+static std::shared_ptr<Oscillator> globalOsc = nullptr; //std::make_shared<Oscillator>(44100, 1024);
 
 // allocate the UI task once and keep it alive
 static std::shared_ptr<UITask> uiTask = nullptr;
@@ -19,10 +19,13 @@ void setup() {
   Serial.begin(115200);
   Serial.println(LVGL_Arduino);
 
+  globalOsc = std::make_shared<Oscillator>(44100, 1024);
   // create persistent task object (pin to core 1 for LVGL if you want)
   uiTask = std::make_shared<UITask>("LVGL Task", 1, globalOsc);
+  //delay(500);
+  bleTask = std::make_shared<BLETask>("BLE Task", 0, globalOsc);
   uiTask->start();
-  bleTask = std::make_shared<BLETask>(globalOsc);
+  delay(500);
   bleTask->start();
 }
 

@@ -7,14 +7,15 @@
 
 class BLETask : public ITask {
 private:
-  //std::shared_ptr<Oscillator> m_osc;
+  std::shared_ptr<Oscillator> m_osc;
   std::shared_ptr<AudioBLE> bleServer;
 
 public:
-  explicit BLETask(std::shared_ptr<Oscillator> osc)
-    : ITask("BLE Task", 0), bleServer(std::make_shared<AudioBLE>(osc)) {}
+  explicit BLETask(const char* name, uint32_t core, std::shared_ptr<Oscillator> osc)
+    : ITask(name, core), m_osc(osc) {}
 
   void setup() override {
+    bleServer = std::make_shared<AudioBLE>(m_osc);
     bleServer->begin();
     bleServer->start();
   }
