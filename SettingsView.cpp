@@ -1,13 +1,13 @@
 #include "Oscillator.hpp"
 #pragma once
 #include <Arduino.h>
-#include "LVGLOscUI.hpp"
+#include "SettingsView.hpp"
 #include <cstdio>
 #include <memory>
 
-LVGLOscUI::LVGLOscUI(std::shared_ptr<Oscillator> osc) : m_osc(osc) {}
+SettingsView::SettingsView(std::shared_ptr<Oscillator> osc) : m_osc(osc) {}
 
-void LVGLOscUI::create(lv_obj_t *parent) {
+void SettingsView::create(lv_obj_t *parent) {
     // Create a container that uses grid
     lv_obj_t* cont = parent; //lv_obj_create(parent);
     //lv_obj_set_size(cont, lv_pct(100), lv_pct(100));
@@ -41,7 +41,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
     lv_slider_set_range(m_freqSlider, 20, 20000);
     lv_slider_set_value(m_freqSlider, 440, LV_ANIM_OFF);
     m_osc->setFrequency(440);
-    lv_obj_add_event_cb(m_freqSlider, LVGLOscUI::s_freqChanged, LV_EVENT_VALUE_CHANGED, this);
+    lv_obj_add_event_cb(m_freqSlider, SettingsView::s_freqChanged, LV_EVENT_VALUE_CHANGED, this);
     lv_obj_set_grid_cell(m_freqSlider,
         LV_GRID_ALIGN_STRETCH, 0, 2,   // full width
         LV_GRID_ALIGN_CENTER, 1, 1     // row 1
@@ -60,7 +60,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
     lv_slider_set_range(m_ampSlider, 0, 100);
     lv_slider_set_value(m_ampSlider, 50, LV_ANIM_OFF);
     m_osc->setAmplitude(0.5);
-    lv_obj_add_event_cb(m_ampSlider, LVGLOscUI::s_ampChanged, LV_EVENT_VALUE_CHANGED, this);
+    lv_obj_add_event_cb(m_ampSlider, SettingsView::s_ampChanged, LV_EVENT_VALUE_CHANGED, this);
     lv_obj_set_grid_cell(m_ampSlider,
         LV_GRID_ALIGN_STRETCH, 0, 2,
         LV_GRID_ALIGN_CENTER, 3, 1
@@ -74,7 +74,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
         "Triangle\n"
         "Saw"
     );
-    lv_obj_add_event_cb(m_waveDropdown, LVGLOscUI::s_waveChanged, LV_EVENT_VALUE_CHANGED, this);
+    lv_obj_add_event_cb(m_waveDropdown, SettingsView::s_waveChanged, LV_EVENT_VALUE_CHANGED, this);
     lv_obj_set_grid_cell(m_waveDropdown,
         LV_GRID_ALIGN_START, 0, 2,
         LV_GRID_ALIGN_CENTER, 4, 1
@@ -83,7 +83,7 @@ void LVGLOscUI::create(lv_obj_t *parent) {
 
     // ========== Start Button ==========
     m_startBtn = lv_btn_create(cont);
-    lv_obj_add_event_cb(m_startBtn, LVGLOscUI::s_btnClicked, LV_EVENT_CLICKED, this);
+    lv_obj_add_event_cb(m_startBtn, SettingsView::s_btnClicked, LV_EVENT_CLICKED, this);
     lv_obj_set_grid_cell(m_startBtn,
         LV_GRID_ALIGN_CENTER, 0, 2,
         LV_GRID_ALIGN_CENTER, 5, 1
@@ -93,19 +93,19 @@ void LVGLOscUI::create(lv_obj_t *parent) {
     lv_label_set_text(btnLabel, "Start");
 }
 
-void LVGLOscUI::updateFreqLabel(int v) {
+void SettingsView::updateFreqLabel(int v) {
     char buf[32];
     std::snprintf(buf, sizeof(buf), "Freq: %d Hz", v);
     lv_label_set_text(m_freqLabel, buf);
 }
 
-void LVGLOscUI::onFreqChanged(lv_event_t *e) {
+void SettingsView::onFreqChanged(lv_event_t *e) {
     int v = lv_slider_get_value(m_freqSlider);
     updateFreqLabel(v);
     m_osc->setFrequency(static_cast<float>(v));
 }
 
-void LVGLOscUI::onAmpChanged(lv_event_t *e) {
+void SettingsView::onAmpChanged(lv_event_t *e) {
     int v = lv_slider_get_value(m_ampSlider);
     float result = static_cast<float>(v) / 100.0f;
     char buf[32];
@@ -114,13 +114,13 @@ void LVGLOscUI::onAmpChanged(lv_event_t *e) {
     m_osc->setAmplitude(result);
 }
 
-void LVGLOscUI::onWaveChanged(lv_event_t *e) {
+void SettingsView::onWaveChanged(lv_event_t *e) {
     uint16_t sel = lv_dropdown_get_selected(m_waveDropdown);
     if (sel > 3) sel = 0;
     m_osc->setWaveform(static_cast<Waveform>(sel));
 }
 
-void LVGLOscUI::onBtnClicked(lv_event_t *e) {
+void SettingsView::onBtnClicked(lv_event_t *e) {
     Serial.printf("UIButton clicked — m_osc=%p, m_btnToggle=%p\n", (void*)m_osc.get(), (void*)m_startBtn);
     
     auto self = this; // instance method
@@ -143,20 +143,20 @@ void LVGLOscUI::onBtnClicked(lv_event_t *e) {
 }
 
 /* static trampolines */
-void LVGLOscUI::s_freqChanged(lv_event_t *e) {
-    LVGLOscUI *self = static_cast<LVGLOscUI*>(lv_event_get_user_data(e));
+void SettingsView::s_freqChanged(lv_event_t *e) {
+    SettingsView *self = static_cast<SettingsView*>(lv_event_get_user_data(e));
     if (self) self->onFreqChanged(e);
 }
-void LVGLOscUI::s_ampChanged(lv_event_t *e) {
-    LVGLOscUI *self = static_cast<LVGLOscUI*>(lv_event_get_user_data(e));
+void SettingsView::s_ampChanged(lv_event_t *e) {
+    SettingsView *self = static_cast<SettingsView*>(lv_event_get_user_data(e));
     if (self) self->onAmpChanged(e);
 }
-void LVGLOscUI::s_waveChanged(lv_event_t *e) {
-    LVGLOscUI *self = static_cast<LVGLOscUI*>(lv_event_get_user_data(e));
+void SettingsView::s_waveChanged(lv_event_t *e) {
+    SettingsView *self = static_cast<SettingsView*>(lv_event_get_user_data(e));
     if (self) self->onWaveChanged(e);
 }
-void LVGLOscUI::s_btnClicked(lv_event_t *e) {
+void SettingsView::s_btnClicked(lv_event_t *e) {
     Serial.printf("--- UIButton clicked — e=%p ---\n", (void*)e);
-    LVGLOscUI *self = static_cast<LVGLOscUI*>(lv_event_get_user_data(e));
+    SettingsView *self = static_cast<SettingsView*>(lv_event_get_user_data(e));
     if (self) self->onBtnClicked(e);
 }

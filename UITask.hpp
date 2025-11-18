@@ -1,7 +1,4 @@
 #pragma once
-
-#include "ITask.hpp"
-#include "LVGLOscilloscope.hpp"
 #include <memory>
 #include <SPI.h>
 
@@ -20,7 +17,10 @@
 // Install the "XPT2046_Touchscreen" library by Paul Stoffregen to use the Touchscreen - https://github.com/PaulStoffregen/XPT2046_Touchscreen
 // Note: this library doesn't require further configuration
 #include <XPT2046_Touchscreen.h>
-#include "LVGLOscUI.hpp"
+
+#include "ITask.hpp"
+#include "GraphView.hpp"
+#include "SettingsView.hpp"
 
 // Touchscreen pins
 #define XPT2046_IRQ 36   // T_IRQ
@@ -43,8 +43,8 @@ typedef struct _tft_t {
 class UITask : public ITask {
 private:
   lv_obj_t* main_gui = nullptr;
-  std::shared_ptr<LVGLOscUI> oscUI;
-  std::shared_ptr<LVGLOscilloscope> chartUI;
+  std::shared_ptr<SettingsView> oscUI;
+  std::shared_ptr<GraphView> chartUI;
   std::shared_ptr<Oscillator> m_osc;
 
   void startUIFramework();
@@ -77,10 +77,10 @@ public:
     lv_obj_t *viewerTab = lv_tabview_add_tab(main_gui, "Viewer");
 
     //m_osc = std::make_shared<Oscillator>(44100, 1024);
-    oscUI = std::make_shared<LVGLOscUI>(m_osc);
+    oscUI = std::make_shared<SettingsView>(m_osc);
     oscUI->create(setupTab);
     
-    chartUI = std::make_shared<LVGLOscilloscope>(m_osc);
+    chartUI = std::make_shared<GraphView>(m_osc);
     chartUI->begin(viewerTab);
 
     lv_screen_load(main_gui);

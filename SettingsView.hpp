@@ -3,10 +3,10 @@
 #include <lvgl.h>
 #include <memory>
 
-class LVGLOscUI {
+class SettingsView {
 public:
-    explicit LVGLOscUI(std::shared_ptr<Oscillator> osc);
-    ~LVGLOscUI() = default;
+    explicit SettingsView(std::shared_ptr<Oscillator> osc);
+    ~SettingsView() = default;
 
     // create widgets on given parent (usually lv_scr_act())
     void create(lv_obj_t *parent);

@@ -1,6 +1,6 @@
-#include "LVGLOscilloscope.hpp"
+#include "GraphView.hpp"
 
-LVGLOscilloscope::LVGLOscilloscope(
+GraphView::GraphView(
   std::shared_ptr<Oscillator> osc,
   uint16_t sampleCount,
   uint32_t updateMs)
@@ -8,7 +8,7 @@ LVGLOscilloscope::LVGLOscilloscope(
     m_sampleCount(sampleCount),
     m_updateMs(updateMs) {}
 
-void LVGLOscilloscope::initChart(lv_obj_t* parent) {
+void GraphView::initChart(lv_obj_t* parent) {
   // Create chart object
   m_chart = lv_chart_create(parent);
   lv_obj_set_size(m_chart, LV_PCT(100), LV_PCT(100));
@@ -29,7 +29,7 @@ void LVGLOscilloscope::initChart(lv_obj_t* parent) {
     m_series->y_points[i] = 50;  // midline
 }
 
-void LVGLOscilloscope::update() {
+void GraphView::update() {
   float s = m_osc->nextSample();
 
   // clamp -1..1

@@ -3,21 +3,21 @@
 #include <lvgl.h>
 #include "Oscillator.hpp"
 
-class LVGLOscilloscope {
+class GraphView {
 public:
-  LVGLOscilloscope(std::shared_ptr<Oscillator> osc,
+  GraphView(std::shared_ptr<Oscillator> osc,
                    uint16_t sampleCount = 200,
                    uint32_t updateMs = 10);
 
-  ~LVGLOscilloscope() = default;
+  ~GraphView() = default;
 
   void begin(lv_obj_t* parent) {
     initChart(parent);
 
     // Create an LVGL timer that calls update()
     timer = lv_timer_create([](lv_timer_t* t) {
-      LVGLOscilloscope* scope =
-        static_cast<LVGLOscilloscope*>(t->user_data);
+      GraphView* scope =
+        static_cast<GraphView*>(t->user_data);
       scope->update();
     },
                     m_updateMs, this);
