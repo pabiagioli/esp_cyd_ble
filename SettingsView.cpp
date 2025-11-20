@@ -1,11 +1,11 @@
-#include "Oscillator.hpp"
 #pragma once
+#include "FPOscillator.hpp"
 #include <Arduino.h>
 #include "SettingsView.hpp"
 #include <cstdio>
 #include <memory>
 
-SettingsView::SettingsView(std::shared_ptr<Oscillator> osc) : m_osc(osc) {}
+SettingsView::SettingsView(std::shared_ptr<FPOscillator> osc) : m_osc(osc) {}
 
 void SettingsView::create(lv_obj_t *parent) {
     // Create a container that uses grid
@@ -156,7 +156,7 @@ void SettingsView::s_waveChanged(lv_event_t *e) {
     if (self) self->onWaveChanged(e);
 }
 void SettingsView::s_btnClicked(lv_event_t *e) {
-    Serial.printf("--- UIButton clicked — e=%p ---\n", (void*)e);
+    //Serial.printf("--- UIButton clicked — e=%p ---\n", (void*)e);
     SettingsView *self = static_cast<SettingsView*>(lv_event_get_user_data(e));
     if (self) self->onBtnClicked(e);
 }

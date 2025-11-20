@@ -5,14 +5,14 @@
 
 class SettingsView {
 public:
-    explicit SettingsView(std::shared_ptr<Oscillator> osc);
+    explicit SettingsView(std::shared_ptr<FPOscillator> osc);
     ~SettingsView() = default;
 
     // create widgets on given parent (usually lv_scr_act())
     void create(lv_obj_t *parent);
 
 private:
-    std::shared_ptr<Oscillator> m_osc;
+    std::shared_ptr<FPOscillator> m_osc;
 
     // lv objects
     lv_obj_t *m_freqLabel = nullptr;

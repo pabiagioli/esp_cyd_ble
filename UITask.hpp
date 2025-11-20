@@ -45,7 +45,7 @@ private:
   lv_obj_t* main_gui = nullptr;
   std::shared_ptr<SettingsView> oscUI;
   std::shared_ptr<GraphView> chartUI;
-  std::shared_ptr<Oscillator> m_osc;
+  std::shared_ptr<FPOscillator> m_osc;
 
   void startUIFramework();
   void setUITheme();
@@ -58,8 +58,8 @@ public:
   SPIClass touchscreenSPI = SPIClass(VSPI);
   XPT2046_Touchscreen touchscreen = XPT2046_Touchscreen(XPT2046_CS, XPT2046_IRQ);
 
-  explicit UITask(const char* name, uint32_t core, std::shared_ptr<Oscillator> osc)
-    : ITask(name, core), m_osc(osc) {}
+  explicit UITask(const char* name, uint32_t core, std::shared_ptr<FPOscillator> osc)
+    : ITask(name, core, 1024 * 48), m_osc(osc) {}
 
   /// public static methods
 

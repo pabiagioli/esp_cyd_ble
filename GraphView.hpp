@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
 #include <lvgl.h>
-#include "Oscillator.hpp"
+#include "FPOscillator.hpp"
 
 class GraphView {
 public:
-  GraphView(std::shared_ptr<Oscillator> osc,
+  GraphView(std::shared_ptr<FPOscillator> osc,
                    uint16_t sampleCount = 200,
                    uint32_t updateMs = 10);
 
@@ -30,7 +30,7 @@ private:
   lv_timer_t *timer;
   void initChart(lv_obj_t* parent);
 
-  std::shared_ptr<Oscillator> m_osc;
+  std::shared_ptr<FPOscillator> m_osc;
 
   lv_obj_t* m_chart = nullptr;
   lv_chart_series_t* m_series = nullptr;

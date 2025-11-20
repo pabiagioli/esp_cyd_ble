@@ -1,6 +1,6 @@
-#include "BLEDevice.h"
-#include "AudioBLE.hpp"
+#pragma once
 #include <Arduino.h>
+#include "AudioBLE.hpp"
 
 void AudioBLE::begin() {
   const char* SERVICE_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";

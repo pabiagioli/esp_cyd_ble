@@ -1,13 +1,13 @@
 #pragma once
 #include <memory>
-#include "Oscillator.hpp"
-#include "ADPCM.hpp"
 #include <BLEDevice.h>
+#include "FPOscillator.hpp"
+#include "ADPCM.hpp"
 
 class AudioBLE {
 public:
 
-  explicit AudioBLE(std::shared_ptr<Oscillator> osc)
+  explicit AudioBLE(std::shared_ptr<FPOscillator> osc)
     : m_osc(osc) {}
 
   void begin();
@@ -23,7 +23,7 @@ public:
   }
 
 private:
-  std::shared_ptr<Oscillator> m_osc;
+  std::shared_ptr<FPOscillator> m_osc;
   BLEServer* server;
   BLECharacteristic* m_char = nullptr;
   bool m_running = false;

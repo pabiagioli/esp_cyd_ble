@@ -1,7 +1,8 @@
+#include "widgets/chart/lv_chart.h"
 #include "GraphView.hpp"
 
 GraphView::GraphView(
-  std::shared_ptr<Oscillator> osc,
+  std::shared_ptr<FPOscillator> osc,
   uint16_t sampleCount,
   uint32_t updateMs)
   : m_osc(osc),
@@ -14,6 +15,8 @@ void GraphView::initChart(lv_obj_t* parent) {
   lv_obj_set_size(m_chart, LV_PCT(100), LV_PCT(100));
 
   lv_chart_set_type(m_chart, LV_CHART_TYPE_LINE);
+  lv_chart_set_update_mode(m_chart, LV_CHART_UPDATE_MODE_CIRCULAR);
+  lv_obj_set_style_size(m_chart, 0, 0, LV_PART_INDICATOR);
   lv_chart_set_point_count(m_chart, m_sampleCount);
   lv_chart_set_range(m_chart,
                      LV_CHART_AXIS_PRIMARY_Y,
@@ -30,14 +33,23 @@ void GraphView::initChart(lv_obj_t* parent) {
 }
 
 void GraphView::update() {
-  float s = m_osc->nextSample();
+  float sample = m_osc->nextSample();
 
   // clamp -1..1
-  if (s < -1.0f) s = -1.0f;
-  if (s > 1.0f) s = 1.0f;
+  if (sample < -1.0f) sample = -1.0f;
+  if (sample > 1.0f) sample = 1.0f;
 
   // convert to 0..100
-  uint16_t y = (uint16_t)((s + 1.0f) * 50.0f);
+  uint16_t y = (uint16_t)((sample + 1.0f) * 50.0f);
 
   lv_chart_set_next_value(m_chart, m_series, y);
+
+  uint32_t p = lv_chart_get_point_count(m_chart);
+  uint32_t s = lv_chart_get_x_start_point(m_chart, m_series);
+  int32_t* a = lv_chart_get_series_y_array(m_chart, m_series);
+
+  a[(s + 1) % p] = LV_CHART_POINT_NONE;
+  a[(s + 2) % p] = LV_CHART_POINT_NONE;
+  a[(s + 2) % p] = LV_CHART_POINT_NONE;
+  //lv_chart_refresh(m_chart);
 }
