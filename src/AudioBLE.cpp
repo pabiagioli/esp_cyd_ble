@@ -1,4 +1,3 @@
-#pragma once
 #include <Arduino.h>
 #include "AudioBLE.hpp"
 
@@ -77,10 +76,11 @@ void AudioBLE::update() {
   static uint8_t out[N / 2];
 
   // Generate PCM block
+  float sample;
   for (int i = 0; i < N; i++) {
-    float s = m_osc->nextSample();
-    s = constrain(s, -1.0f, 1.0f);
-    pcm[i] = (int16_t)(s * 32767);
+    audioBuffer->pop(sample);
+    sample = constrain(sample, -1.0f, 1.0f);
+    pcm[i] = (int16_t)(sample * 32767);
   }
 
   // ADPCM encode -> out[]

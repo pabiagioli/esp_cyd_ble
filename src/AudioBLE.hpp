@@ -1,14 +1,14 @@
 #pragma once
 #include <memory>
 #include <BLEDevice.h>
-#include "FPOscillator.hpp"
+#include "RingBuffer.hpp"
 #include "ADPCM.hpp"
 
 class AudioBLE {
 public:
 
-  explicit AudioBLE(std::shared_ptr<FPOscillator> osc)
-    : m_osc(osc) {}
+  explicit AudioBLE(std::shared_ptr<RingBuffer<float, 2048>> buffer)
+    : audioBuffer(buffer) {}
 
   void begin();
   void start();
@@ -23,7 +23,7 @@ public:
   }
 
 private:
-  std::shared_ptr<FPOscillator> m_osc;
+  std::shared_ptr<RingBuffer<float, 2048>> audioBuffer;
   BLEServer* server;
   BLECharacteristic* m_char = nullptr;
   bool m_running = false;

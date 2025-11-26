@@ -1,4 +1,3 @@
-#pragma once
 #include "FPOscillator.hpp"
 #include <Arduino.h>
 #include "SettingsView.hpp"
@@ -27,10 +26,10 @@ void SettingsView::create(lv_obj_t *parent) {
     };
 
     lv_obj_set_grid_dsc_array(cont, col_dsc, row_dsc);
-
+    float initialFreq = 100;
     // ========== Frequency Label ==========
     m_freqLabel = lv_label_create(cont);
-    lv_label_set_text(m_freqLabel, "Frequency: 440 Hz");
+    lv_label_set_text(m_freqLabel, "Frequency: 100 Hz");
     lv_obj_set_grid_cell(m_freqLabel,
         LV_GRID_ALIGN_START, 0, 2,   // col 0-1
         LV_GRID_ALIGN_CENTER, 0, 1   // row 0
@@ -39,8 +38,8 @@ void SettingsView::create(lv_obj_t *parent) {
     // ========== Frequency Slider ==========
     m_freqSlider = lv_slider_create(cont);
     lv_slider_set_range(m_freqSlider, 20, 20000);
-    lv_slider_set_value(m_freqSlider, 440, LV_ANIM_OFF);
-    m_osc->setFrequency(440);
+    lv_slider_set_value(m_freqSlider, 100, LV_ANIM_OFF);
+    m_osc->setFrequency(100);
     lv_obj_add_event_cb(m_freqSlider, SettingsView::s_freqChanged, LV_EVENT_VALUE_CHANGED, this);
     lv_obj_set_grid_cell(m_freqSlider,
         LV_GRID_ALIGN_STRETCH, 0, 2,   // full width

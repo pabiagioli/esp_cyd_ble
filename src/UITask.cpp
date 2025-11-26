@@ -1,5 +1,3 @@
-#include "misc/lv_palette.h"
-#pragma once
 #include "UITask.hpp"
 
 void UITask::touchscreen_read(lv_indev_t* indev, lv_indev_data_t* data) {

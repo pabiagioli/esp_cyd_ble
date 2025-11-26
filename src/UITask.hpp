@@ -21,6 +21,8 @@
 #include "ITask.hpp"
 #include "GraphView.hpp"
 #include "SettingsView.hpp"
+#include "FPOscillator.hpp"
+#include "RingBuffer.hpp"
 
 // Touchscreen pins
 #define XPT2046_IRQ 36   // T_IRQ
@@ -46,6 +48,7 @@ private:
   std::shared_ptr<SettingsView> oscUI;
   std::shared_ptr<GraphView> chartUI;
   std::shared_ptr<FPOscillator> m_osc;
+  std::shared_ptr<RingBuffer<float, cfg::AUDIO_BUFFER_SIZE>> audioBuffer;
 
   void startUIFramework();
   void setUITheme();
@@ -58,29 +61,31 @@ public:
   SPIClass touchscreenSPI = SPIClass(VSPI);
   XPT2046_Touchscreen touchscreen = XPT2046_Touchscreen(XPT2046_CS, XPT2046_IRQ);
 
-  explicit UITask(const char* name, uint32_t core, std::shared_ptr<FPOscillator> osc)
-    : ITask(name, core, 1024 * 48), m_osc(osc) {}
+  explicit UITask(const char* name, uint32_t core,
+                  std::shared_ptr<FPOscillator> osc,
+                  std::shared_ptr<RingBuffer<float, cfg::AUDIO_BUFFER_SIZE>> buffer)
+    : ITask(name, core, 1024 * 32, 3), m_osc(osc), audioBuffer(buffer) {}
 
   /// public static methods
 
   static void touchscreen_read(lv_indev_t* indev, lv_indev_data_t* data);
   static void log_print(lv_log_level_t level, const char* buf);
-  
+
   /*--- inherited methods ---*/
-  
+
   void setup() override {
     startUIFramework();
     setUITheme();
 
     main_gui = lv_tabview_create(NULL);
-    lv_obj_t *setupTab = lv_tabview_add_tab(main_gui, "Setup");
-    lv_obj_t *viewerTab = lv_tabview_add_tab(main_gui, "Viewer");
+    lv_obj_t* setupTab = lv_tabview_add_tab(main_gui, "Setup");
+    lv_obj_t* viewerTab = lv_tabview_add_tab(main_gui, "Viewer");
 
     //m_osc = std::make_shared<Oscillator>(44100, 1024);
     oscUI = std::make_shared<SettingsView>(m_osc);
     oscUI->create(setupTab);
-    
-    chartUI = std::make_shared<GraphView>(m_osc);
+
+    chartUI = std::make_shared<GraphView>(audioBuffer);
     chartUI->begin(viewerTab);
 
     lv_screen_load(main_gui);
@@ -92,5 +97,4 @@ public:
     lv_tick_inc(5);     // tell LVGL how much time has passed
     vTaskDelay(pdMS_TO_TICKS(5));
   }
-
 };

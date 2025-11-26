@@ -1,5 +1,5 @@
 #pragma once
-#include "Oscillator.hpp"
+#include "FPOscillator.hpp"
 #include <lvgl.h>
 #include <memory>
 
