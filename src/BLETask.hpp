@@ -9,12 +9,12 @@ class BLETask : public ITask {
 private:
   std::shared_ptr<AudioBLE> bleServer;
   //std::shared_ptr<FPOscillator> m_osc;
-  std::shared_ptr<RingBuffer<float, 2048>> audioBuffer;
+  std::shared_ptr<RingBuffer<float, cfg::BLE_BUFFER_SIZE>> audioBuffer;
 
 public:
   explicit BLETask(const char* name, uint32_t core,
                    //std::shared_ptr<FPOscillator> osc, 
-                   std::shared_ptr<RingBuffer<float, 2048>> buffer)
+                   std::shared_ptr<RingBuffer<float, cfg::BLE_BUFFER_SIZE>> buffer)
     : ITask(name, core, 1024 * 8, 5), /*m_osc(osc),*/ audioBuffer(buffer) {}
 
   void setup() override {

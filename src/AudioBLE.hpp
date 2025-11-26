@@ -3,11 +3,12 @@
 #include <BLEDevice.h>
 #include "RingBuffer.hpp"
 #include "ADPCM.hpp"
+#include "pampanet_config.h"
 
 class AudioBLE {
 public:
 
-  explicit AudioBLE(std::shared_ptr<RingBuffer<float, 2048>> buffer)
+  explicit AudioBLE(std::shared_ptr<RingBuffer<float, cfg::BLE_BUFFER_SIZE>> buffer)
     : audioBuffer(buffer) {}
 
   void begin();
@@ -23,7 +24,7 @@ public:
   }
 
 private:
-  std::shared_ptr<RingBuffer<float, 2048>> audioBuffer;
+  std::shared_ptr<RingBuffer<float, cfg::BLE_BUFFER_SIZE>> audioBuffer;
   BLEServer* server;
   BLECharacteristic* m_char = nullptr;
   bool m_running = false;

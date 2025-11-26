@@ -33,6 +33,8 @@ void setup() {
   uiTask = std::make_shared<UITask>("UI Task", cfg::UI_CORE, globalOsc, audioBuffer);
   //delay(500);
   bleTask = std::make_shared<BLETask>("BLE Task", cfg::BLE_CORE, bleBuffer);
+  audioTask->start();
+  delay(500);
   uiTask->start();
   delay(500);
   bleTask->start();

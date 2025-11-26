@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 #include <lvgl.h>
-#include "pampanet_config.h"
 #include "RingBuffer.hpp"
-//#include "fractional_resampler.hpp"
+#include "pampanet_config.h"
+
 
 class GraphView {
 public:

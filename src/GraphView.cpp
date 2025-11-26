@@ -1,6 +1,5 @@
 #include "GraphView.hpp"
 
-
 GraphView::GraphView(
   std::shared_ptr<RingBuffer<float, cfg::AUDIO_BUFFER_SIZE>> buffer,
   uint16_t sampleCount,
